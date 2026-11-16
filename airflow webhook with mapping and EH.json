@@ -1,0 +1,179 @@
+{
+  "name": "airflow webhook with mapping and EH",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "455362e0-a625-489d-b327-8f213fd451f1",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5aff9d08-afae-4551-8830-ff7d5bf264b5",
+      "name": "Webhook",
+      "webhookId": "455362e0-a625-489d-b327-8f213fd451f1",
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0432cf16-9ec4-4c82-9227-81fa982c8ed0",
+              "name": "Source",
+              "value": "=n8n",
+              "type": "string"
+            },
+            {
+              "id": "905ce87a-6042-4b86-8055-ccd667bff493",
+              "name": "Message",
+              "value": "=hey, it's n8n",
+              "type": "string"
+            },
+            {
+              "id": "6a4f0ea3-cc2c-464f-b7cc-2cfd03462244",
+              "name": "number",
+              "value": "={{ $json.body.number }}",
+              "type": "number"
+            },
+            {
+              "id": "c748d6af-7266-4eeb-b7ad-c091bf77b56e",
+              "name": "double the number from airflow",
+              "value": "={{\"The double of \" + $json.body.number + \" is \" + $json.body.number*2}}",
+              "type": "string"
+            },
+            {
+              "id": "9e30553b-3895-4b7c-a07d-5d85bf5724e2",
+              "name": "Upper case of original source value",
+              "value": "={{\"Upper case of \" + $json.body.source + \" is \" + $json.body.source.toUpperCase()}}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        224,
+        0
+      ],
+      "id": "1814d7ab-fb58-4d3d-9a26-96edfb768f53",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        0
+      ],
+      "id": "65295c2a-52af-4889-8bad-e34d0eb06272",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "fromEmail": "sushev.dhaka20@gmail.com",
+        "toEmail": "sushev.dhaka20@gmail.com",
+        "subject": "n8n Airflow Test flow Errored",
+        "emailFormat": "text",
+        "text": "={{ JSON.stringify($json,null,2) }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        272,
+        144
+      ],
+      "id": "bf185b89-3116-4b9b-8fba-030e4d198d61",
+      "name": "Send an Email",
+      "webhookId": "8e2fe3e0-4288-4bdb-82a2-a135a2bbc151",
+      "credentials": {
+        "smtp": {
+          "id": "2PzTRbEbEWLgP7Tu",
+          "name": "SMTP account"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "Webhook": [
+      {
+        "json": {
+          "headers": {
+            "host": "172.18.96.1:5678",
+            "user-agent": "python-requests/2.34.2",
+            "accept-encoding": "gzip, deflate",
+            "accept": "*/*",
+            "connection": "keep-alive",
+            "content-length": "67",
+            "content-type": "application/json"
+          },
+          "params": {},
+          "query": {},
+          "body": {
+            "source": "airflow",
+            "message": "hey, it's airflow",
+            "number": 24
+          },
+          "webhookUrl": "http://localhost:5678/webhook-test/455362e0-a625-489d-b327-8f213fd451f1",
+          "executionMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send an Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "06933463-63c0-459c-9840-99d61b55bc3d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "585fdc53c487c9cec904901ed2cb168b0957e48515a4496968735f01ba819eca"
+  },
+  "nodeGroups": [],
+  "id": "oe3FFetPsxEU3wWt",
+  "tags": []
+}
